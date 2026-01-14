@@ -35,7 +35,7 @@ public class TicTacToeOnline {
         textLabel.setForeground(Color.white);
         textLabel.setFont(new Font("Arial", Font.BOLD, 40));
         textLabel.setHorizontalAlignment(JLabel.CENTER);
-        textLabel.setText("In attesa dell'avversario...");
+        textLabel.setText("Caricamento...");
         textLabel.setOpaque(true);
 
         textPanel.setLayout(new BorderLayout());
@@ -83,40 +83,51 @@ public class TicTacToeOnline {
                 });
             }
         }
+
+        //Chiama subito handleGameStart se i dati sono già disponibili
+        if (client.getMySymbol() != null && client.getOpponent() != null) {
+            handleGameStart(client.getOpponent(), client.getMySymbol());
+        }
     }
 
     /*Gestisce l'inizio della partita*/
     public void handleGameStart(String opponent, String symbol) {
-        this.mySymbol = symbol;
-        this.currentPlayer = "X";
-        
-        //Il giocatore X inizia sempre per primo
-        if (symbol.equals("X")) {
-            myTurn = true;
-            textLabel.setText("Il tuo turno! Sei " + symbol);
-        } else {
-            myTurn = false;
-            textLabel.setText("Turno di " + opponent + " (X)");
-        }
+        SwingUtilities.invokeLater(() -> {
+            this.mySymbol = symbol;
+            this.currentPlayer = "X";
+            
+            System.out.println("Partita iniziata! Io sono " + symbol + ", avversario: " + opponent);
+            
+            //Il giocatore X inizia sempre per primo
+            if (symbol.equals("X")) {
+                myTurn = true;
+                textLabel.setText("Il tuo turno! Sei " + symbol);
+            } else {
+                myTurn = false;
+                textLabel.setText("Turno di " + opponent + " (X)");
+            }
+        });
     }
 
     /*Gestisce la mossa dell'avversario*/
     public void handleOpponentMove(int row, int col, String symbol) {
-        //Controlla che le coordinate siano valide
-        if (row < 0 || row > 2 || col < 0 || col > 2) {
-            System.err.println("Coordinate non valide: " + row + ", " + col);
-            return;
-        }
+        SwingUtilities.invokeLater(() -> {
+            //Controlla che le coordinate siano valide
+            if (row < 0 || row > 2 || col < 0 || col > 2) {
+                System.err.println("Coordinate non valide: " + row + ", " + col);
+                return;
+            }
 
-        board[row][col].setText(symbol);
-        turns++;
-        myTurn = true;
-        
-        checkWinner();
-        
-        if (!gameOver) {
-            textLabel.setText("Il tuo turno! Sei " + mySymbol);
-        }
+            board[row][col].setText(symbol);
+            turns++;
+            myTurn = true;
+            
+            checkWinner();
+            
+            if (!gameOver) {
+                textLabel.setText("Il tuo turno! Sei " + mySymbol);
+            }
+        });
     }
 
     /*Controlla se c'è un vincitore*/
