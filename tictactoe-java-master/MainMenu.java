@@ -60,15 +60,9 @@ public class MainMenu {
             try {
                 //Connessione al server
                 client = new GameClient("localhost", 12345);
+                client.setMenuUI(this);
                 myNickname = nickname;
                 client.sendNickname(nickname);
-                
-                //Aspetta la risposta del server
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {}
-                }).start();
                 
             } catch (IOException ex) {
                 errorLabel.setText("Impossibile connettersi al server!");
@@ -169,24 +163,28 @@ public class MainMenu {
     /*Gestisce la lista dei giocatori*/
     public void handlePlayerList(String players) {
         SwingUtilities.invokeLater(() -> {
-            Component[] components = ((JPanel) frame.getContentPane().getComponent(0)).getComponents();
-            for (Component comp : components) {
-                if (comp instanceof JScrollPane) {
-                    JScrollPane scroll = (JScrollPane) comp;
-                    JList<String> list = (JList<String>) scroll.getViewport().getView();
-                    DefaultListModel<String> model = (DefaultListModel<String>) list.getModel();
-                    model.clear();
-                    
-                    if (!players.isEmpty()) {
-                        String[] playerArray = players.split(",");
-                        for (String player : playerArray) {
-                            if (!player.trim().isEmpty()) {
-                                model.addElement(player.trim());
+            try {
+                Component[] components = ((JPanel) frame.getContentPane().getComponent(0)).getComponents();
+                for (Component comp : components) {
+                    if (comp instanceof JScrollPane) {
+                        JScrollPane scroll = (JScrollPane) comp;
+                        JList<String> list = (JList<String>) scroll.getViewport().getView();
+                        DefaultListModel<String> model = (DefaultListModel<String>) list.getModel();
+                        model.clear();
+                        
+                        if (!players.isEmpty()) {
+                            String[] playerArray = players.split(",");
+                            for (String player : playerArray) {
+                                if (!player.trim().isEmpty()) {
+                                    model.addElement(player.trim());
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
                 }
+            } catch (Exception e) {
+                System.err.println("Errore aggiornamento lista: " + e.getMessage());
             }
         });
     }
