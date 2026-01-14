@@ -8,7 +8,8 @@ public class GameClient {
     private String nickname;
     private String opponent;
     private String mySymbol;
-    private TicTacToeOnline ui;
+    private TicTacToeOnline gameUI;
+    private MainMenu menuUI;
     private Thread listenerThread;
 
     public GameClient(String serverAddress, int port) throws IOException {
@@ -30,9 +31,14 @@ public class GameClient {
         listenerThread.start();
     }
 
-    /*Imposta l'interfaccia grafica*/
+    /*Imposta l'interfaccia del menu*/
+    public void setMenuUI(MainMenu menu) {
+        this.menuUI = menu;
+    }
+
+    /*Imposta l'interfaccia di gioco*/
     public void setUI(TicTacToeOnline ui) {
-        this.ui = ui;
+        this.gameUI = ui;
     }
 
     /*Invia il nickname al server*/
@@ -78,27 +84,28 @@ public class GameClient {
         System.out.println("Dal server: " + message);
 
         if (message.equals("NICKNAME-SUCCESS")) {
-            if (ui != null) ui.handleNicknameSuccess();
+            if (menuUI != null) menuUI.handleNicknameSuccess();
         } else if (message.equals("NOT-VALID")) {
-            if (ui != null) ui.handleNicknameError();
+            if (menuUI != null) menuUI.handleNicknameError();
         } else if (message.startsWith("PLAYERS=")) {
             String playerList = message.substring(8);
-            if (ui != null) ui.handlePlayerList(playerList);
+            if (menuUI != null) menuUI.handlePlayerList(playerList);
         } else if (message.startsWith("CHALLENGE-REQUEST=")) {
             String challenger = message.substring(18);
-            if (ui != null) ui.handleChallengeRequest(challenger);
+            if (menuUI != null) menuUI.handleChallengeRequest(challenger);
         } else if (message.startsWith("CHALLENGE-DECLINED=")) {
             String player = message.substring(19);
-            if (ui != null) ui.handleChallengeDeclined(player);
+            if (menuUI != null) menuUI.handleChallengeDeclined(player);
         } else if (message.startsWith("GAME-START=")) {
             String[] parts = message.split("=");
             this.opponent = parts[1];
             this.mySymbol = parts[2];
-            if (ui != null) ui.handleGameStart(opponent, mySymbol);
+            if (menuUI != null) menuUI.handleGameStart(opponent, mySymbol);
+            if (gameUI != null) gameUI.handleGameStart(opponent, mySymbol);
         } else if (message.startsWith("MOVE=")) {
             handleOpponentMove(message);
         } else if (message.equals("OPPONENT-DISCONNECTED")) {
-            if (ui != null) ui.handleOpponentDisconnected();
+            if (gameUI != null) gameUI.handleOpponentDisconnected();
         }
     }
 
@@ -111,7 +118,7 @@ public class GameClient {
             int col = Integer.parseInt(parts[5]);
             String symbol = parts[3];
             
-            if (ui != null) ui.handleOpponentMove(row, col, symbol);
+            if (gameUI != null) gameUI.handleOpponentMove(row, col, symbol);
         } catch (Exception e) {
             System.err.println("Errore nel parsing della mossa: " + e.getMessage());
         }
