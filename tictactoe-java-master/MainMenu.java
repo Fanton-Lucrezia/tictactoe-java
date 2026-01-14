@@ -7,6 +7,8 @@ public class MainMenu {
     private JFrame frame;
     private GameClient client;
     private String myNickname;
+    private String pendingOpponent;
+    private String pendingSymbol;
 
     public MainMenu() {
         frame = new JFrame("Tic-Tac-Toe Online - Menu");
@@ -217,9 +219,19 @@ public class MainMenu {
 
     /*Gestisce l'inizio della partita*/
     public void handleGameStart(String opponent, String symbol) {
+        //Salva i dati temporaneamente
+        this.pendingOpponent = opponent;
+        this.pendingSymbol = symbol;
+        
         SwingUtilities.invokeLater(() -> {
+            //Crea prima la finestra di gioco
+            TicTacToeOnline game = new TicTacToeOnline(client);
+            
+            //Poi chiama handleGameStart con i dati salvati
+            game.handleGameStart(pendingOpponent, pendingSymbol);
+            
+            //Infine chiudi il menu
             frame.dispose();
-            new TicTacToeOnline(client);
         });
     }
 
