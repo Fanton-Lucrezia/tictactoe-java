@@ -83,11 +83,6 @@ public class TicTacToeOnline {
                 });
             }
         }
-
-        //Chiama subito handleGameStart se i dati sono già disponibili
-        if (client.getMySymbol() != null && client.getOpponent() != null) {
-            handleGameStart(client.getOpponent(), client.getMySymbol());
-        }
     }
 
     /*Gestisce l'inizio della partita*/
