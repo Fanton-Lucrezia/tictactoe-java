@@ -115,6 +115,9 @@ public class GameServer {
 
         /*Gestisce l'accettazione della sfida*/
         private void handleAcceptChallenge(String challenger) {
+            System.out.println("DEBUG: Invio GAME-START a " + this.nickname + " con simbolo O");
+            System.out.println("DEBUG: Invio GAME-START a " + challenger + " con simbolo X");
+
             ClientHandler challengerHandler = players.get(challenger);
             if (challengerHandler != null) {
                 this.inGame = true;

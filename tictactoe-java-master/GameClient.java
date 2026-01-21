@@ -83,6 +83,8 @@ public class GameClient {
     private void handleServerMessage(String message) {
         System.out.println("Dal server: " + message);
 
+        System.out.println("DEBUG: Messaggio ricevuto -> " + message);
+
         if (message.equals("NICKNAME-SUCCESS")) {
             if (menuUI != null) menuUI.handleNicknameSuccess();
         } else if (message.equals("NOT-VALID")) {
